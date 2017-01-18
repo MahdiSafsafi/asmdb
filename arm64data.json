@@ -18,11 +18,11 @@
 // * means optional.
 //
 // Mnemonic is instruction's mnemonic encoded using upper-case letters.
-// If mnemonic starts with lower-case letters, a upper-case letter follows the mnemonic.
-// And this format means that the instruction update the flags. Eg: 'adcSw' instruction.
+// If mnemonic starts with lower-case letters, a upper-case letter follows the mnemonic,
+// and this format means that the instruction update the flags. Eg: 'adcSw' instruction.
 // %c means that the condition is encoded into instruction's mnemonic.
 //
-// Suffixes follows mnemonic. and can be one of this:
+// Suffixes follows mnemonic. and can be combined with the following values:
 // - b	=> Byte.
 // - h	=> Half-word.
 // - w	=> Word.
@@ -1498,14 +1498,14 @@
 
     ["SYSL"             , "Xt, #op1, Cn, Cm, #op2"             , "1101010100|1|01|op1|CRn|CRm|op2|Rt"               , "A64 ARMv8+"],
 
-    ["TBLr.8B%"         , "Vd.T, {Vn.16B}%0, Vm.T"             , "0|Q|001110|00|0|Rm|0|00|0|00|Rn|Rd"               , "A64 ARMv8+"],
+    ["TBLg1.8B%"        , "Vd.T, {Vn.16B}%0, Vm.T"             , "0|Q|001110|00|0|Rm|0|00|0|00|Rn|Rd"               , "A64 ARMv8+"],
     ["TBLg2.8B%"        , "Vd.T, {Vn.16B}%1, Vm.T"             , "0|Q|001110|00|0|Rm|0|01|0|00|Rn|Rd"               , "A64 ARMv8+"],
     ["TBLg3.8B%"        , "Vd.T, {Vn.16B}%2, Vm.T"             , "0|Q|001110|00|0|Rm|0|10|0|00|Rn|Rd"               , "A64 ARMv8+"],
     ["TBLg4.8B%"        , "Vd.T, {Vn.16B}%3, Vm.T"             , "0|Q|001110|00|0|Rm|0|11|0|00|Rn|Rd"               , "A64 ARMv8+"],
 
     ["TBNZ"             , "Rt, #imm6, label14*4"               , "b5|011011|1|b40|imm14|Rt"                         , "A64 ARMv8+"],
 
-    ["TBXr.8B%"         , "Vd.T, {Vn.16B}%0, Vm.T"             , "0|Q|001110|00|0|Rm|0|00|1|00|Rn|Rd"               , "A64 ARMv8+"],
+    ["TBXg1.8B%"        , "Vd.T, {Vn.16B}%0, Vm.T"             , "0|Q|001110|00|0|Rm|0|00|1|00|Rn|Rd"               , "A64 ARMv8+"],
     ["TBXg2.8B%"        , "Vd.T, {Vn.16B}%1, Vm.T"             , "0|Q|001110|00|0|Rm|0|01|1|00|Rn|Rd"               , "A64 ARMv8+"],
     ["TBXg3.8B%"        , "Vd.T, {Vn.16B}%2, Vm.T"             , "0|Q|001110|00|0|Rm|0|10|1|00|Rn|Rd"               , "A64 ARMv8+"],
     ["TBXg4.8B%"        , "Vd.T, {Vn.16B}%3, Vm.T"             , "0|Q|001110|00|0|Rm|0|11|1|00|Rn|Rd"               , "A64 ARMv8+"],
