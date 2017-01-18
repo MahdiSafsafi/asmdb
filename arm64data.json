@@ -13,7 +13,7 @@
 // INSTRUCTION CLASS
 // -----------------
 //
-// Each instruction have a UNIQUE class that distinguishes it from instructions that have same mnemonic.
+// Each instruction has a UNIQUE class that distinguishes it from instructions that have same mnemonic.
 // Class = [Mnemonic][Suffixes]*[.Arrangement specifier]*
 // * means optional.
 //
@@ -135,9 +135,9 @@
 
     ["ADDV"             , "Bd%2, Vn.8B%3|4S"                   , "0|Q|0|01110|sz:2|11000|11011|10|Rn|Rd"            , "A64 ARMv8+"],
 
-    ["ADR"              , "Xd, label21"                        , "0|immlo:2|10000|immhi:19|Rd"                      , "A64 ARMv8+"],
+    ["ADR"              , "Xd, label21"                        , "0|imm2|10000|imm19|Rd"                            , "A64 ARMv8+"],
 
-    ["ADRP"             , "Xd, label21*4096"                   , "1|immlo:2|10000|immhi:19|Rd"                      , "A64 ARMv8+"],
+    ["ADRP"             , "Xd, label21*4096"                   , "1|imm2|10000|imm19|Rd"                            , "A64 ARMv8+"],
 
     ["AESD.16B"         , "Vd.T, Vn.T"                         , "01001110|00|10100|00101|10|Rn|Rd"                 , "A64 ARMv8+"],
 
