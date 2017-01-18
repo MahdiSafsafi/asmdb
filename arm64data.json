@@ -23,32 +23,32 @@
 // %c means that the condition is encoded into instruction's mnemonic.
 //
 // Suffixes follows mnemonic. and can be one of this:
-// - b	=>	Byte.
-// - h	=>	Half-word.
-// - w	=>	Word.
-// - d	=>	Double-word.
-// - q	=>	Qword.
-// - r	=>	Register.
-// - x  =>  eXtend register.
-// - i  =>  Immediate.
-// - n 	=>  Signed offset.
-// - u  =>  Unsigned offset.
-// - p  =>  Post index.
-// - k  =>  Pre index.
-// - f	=>  Fixed-Point.
-// - z  =>  Zero.
-// - e	=>  Element.
-// - s  =>  Scalar.
-// - v	=>  Vector.
-// - fp =>  Floating-Point.
-// - sp =>  Single-Precision.
-// - dp =>  Double-Precision.
-// - hp =>  Half-Precision.
-// - hq =>  Half of 128-bit.
-// - g* =>  List items count where * is a digit [1-4].
-// - im	=>	bitMask Immediate.
-// - il =>	Literal Immediate.
-// - it	=>	inverTed Immediate.
+// - b	=> Byte.
+// - h	=> Half-word.
+// - w	=> Word.
+// - d	=> Double-word.
+// - q	=> Qword.
+// - r	=> Register.
+// - x  => eXtend register.
+// - i  => Immediate.
+// - n 	=> Signed offset.
+// - u  => Unsigned offset.
+// - p  => Post index.
+// - k  => Pre index.
+// - f	=> Fixed-Point.
+// - z  => Zero.
+// - e	=> Element.
+// - s  => Scalar.
+// - v	=> Vector.
+// - fp => Floating-Point.
+// - sp => Single-Precision.
+// - dp => Double-Precision.
+// - hp => Half-Precision.
+// - hq => Half of 128-bit.
+// - g* => List items count where * is a digit [1-4].
+// - im	=> bitMask Immediate.
+// - il => Literal Immediate.
+// - it	=> inverTed Immediate.
 // - xX2yY => convert xX to yY.
 //
 // Arrangement specifier is present only when all operands have the same arrangement specifier.
