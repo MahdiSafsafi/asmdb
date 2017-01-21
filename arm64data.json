@@ -151,6 +151,18 @@
 //   - Conditions => field1 [>|==|!=|<] field2.
 //   - Functions  => See alias functions.
 
+// ALIAS FUNCTIONS
+// ---------------
+//
+// Those functions bellow, are used to check whether the alias should be decoded or not.
+// Each function has 5 strings:
+//   [0]        - Function's name.
+//   [1] .. [4] - Function's argument.
+// If argument is empty, it means that the function does not use it.
+// If argument = '?', it means that the argument is not fixed.
+// And is pushed to the function like this: "PREFERRED_IF=Function:Argument".
+// For more information about how to implement those functions,
+// refer to the ARM-ARM doc. They provide a c-like implementation.
 
 // TODO
 // ----
@@ -170,16 +182,6 @@
     "X": "AArch64"
   ],
   
-// Those functions bellow, are used to check whether the alias should be decoded or not.
-// Each function has 5 strings:
-//   [0]        - Function's name.
-//   [1] .. [4] - Function's argument.
-// If argument is empty, it means that the function does not use it.
-// If argument = '?', it means that the argument is not fixed.
-// And is pushed to the function like this: "PREFERRED_IF=Function:Argument".
-// For more information about how to implement those functions,
-// refer to the ARM-ARM doc. They provide a c-like implementation.
-
   "alias functions":[
     ["MoveWidePreferred" , "sf"  , "N"   , "imms" , "immr"],
     ["BFXPreferred"      , "sf"  , "opc" , "imms" , "immr"],
