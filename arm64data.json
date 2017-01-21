@@ -176,10 +176,10 @@
 {
 
   "architectures": [
-    "H": "Thumb16",
-    "T": "Thumb32",
-    "A": "AArch32",
-    "X": "AArch64"
+    { "H": "Thumb16" },
+    { "T": "Thumb32" },
+    { "A": "AArch32" },
+    { "X": "AArch64" }
   ],
   
   "alias functions":[
