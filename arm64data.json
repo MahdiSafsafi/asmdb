@@ -1301,7 +1301,7 @@
 
     ["shadd.8B%5"     , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|sz:2|1|Rm|:5|1|Rn|Rd"                   , "ARMv8+ GRP60"],
 
-    ["shl"            , "Dd, Dn, #shift"                     , "X:01|0|111110|!=1|immb|01010|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["shl"            , "Dd, Dn, #shift"                     , "X:01|0|111110|immh=1xxx|immb|01010|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["shl.8B%5|2D"    , "Vd.T, Vn.T, #shift"                 , "X:0|Q|0|011110|immh!=0000|immb|01010|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["shll'2"         , "Vd.8H|4S|2D, Vn.8B%5, #8%2"         , "X:0|Q|1|01110|sz:2|10000|10011|10|Rn|Rd"              , "ARMv8+ GRP61"],
@@ -1310,7 +1310,7 @@
 
     ["shsub.8B%5"     , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|sz:2|1|Rm|00100|1|Rn|Rd"                , "ARMv8+ GRP60"],
 
-    ["sli"            , "Dd, Dn, #shift"                     , "X:01|1|111110|!=1|immb|01010|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["sli"            , "Dd, Dn, #shift"                     , "X:01|1|111110|immh=1xxx|immb|01010|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["sli.8B%5|2D"    , "Vd.T, Vn.T, #shift"                 , "X:0|Q|1|011110|immh!=0000|immb|01010|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["smaddl"         , "Xd, Wn, Wm, Xa"                     , "X:1|00|11011|001|Rm|0|Ra|Rn|Rd"                       , "ARMv8+ GRP42"],
@@ -1416,16 +1416,16 @@
 
     ["srhadd.8B%5"    , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|sz:2|1|Rm|00010|1|Rn|Rd"                , "ARMv8+ GRP60"],
 
-    ["sri"            , "Dd, Dn, #shift"                     , "X:01|1|111110|!=1|immb|01000|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["sri"            , "Dd, Dn, #shift"                     , "X:01|1|111110|immh=1xxx|immb|01000|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["sri.8B%5|2D"    , "Vd.T, Vn.T, #shift"                 , "X:0|Q|1|011110|immh!=0000|immb|01000|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["srshl"          , "Dd, Dn, Dm"                         , "X:01|0|11110|11|1|Rm|01010|1|Rn|Rd"                   , "ARMv8+ GRP54"],
     ["srshl.8B%5|2D"  , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|sz:2|1|Rm|01010|1|Rn|Rd"                , "ARMv8+ GRP60"],
 
-    ["srshr"          , "Dd, Dn, #shift"                     , "X:01|0|111110|!=1|immb|00100|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["srshr"          , "Dd, Dn, #shift"                     , "X:01|0|111110|immh=1xxx|immb|00100|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["srshr.8B%5|2D"  , "Vd.T, Vn.T, #shift"                 , "X:0|Q|0|011110|immh!=0000|immb|00100|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
-    ["srsra"          , "Dd, Dn, #shift"                     , "X:01|0|111110|!=1|immb|00110|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["srsra"          , "Dd, Dn, #shift"                     , "X:01|0|111110|immh=1xxx|immb|00110|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["srsra.8B%5|2D"  , "Vd.T, Vn.T, #shift"                 , "X:0|Q|0|011110|immh!=0000|immb|00110|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["sshl"           , "Dd, Dn, Dm"                         , "X:01|0|11110|11|1|Rm|01000|1|Rn|Rd"                   , "ARMv8+ GRP54"],
@@ -1433,10 +1433,10 @@
 
     ["sshll'2"        , "Vd.8H|4S|2D, Vn.8B%5, #shift"       , "X:0|Q|0|011110|immh!=0000|immb|10100|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
-    ["sshr"           , "Dd, Dn, #shift"                     , "X:01|0|111110|!=1|immb|:5|1|Rn|Rd"                    , "ARMv8+ GRP52"],
+    ["sshr"           , "Dd, Dn, #shift"                     , "X:01|0|111110|immh=1xxx|immb|:5|1|Rn|Rd"              , "ARMv8+ GRP52"],
     ["sshr.8B%5|2D"   , "Vd.T, Vn.T, #shift"                 , "X:0|Q|0|011110|immh!=0000|immb|:5|1|Rn|Rd"            , "ARMv8+ GRP57"],
 
-    ["ssra"           , "Dd, Dn, #shift"                     , "X:01|0|111110|!=1|immb|00010|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["ssra"           , "Dd, Dn, #shift"                     , "X:01|0|111110|immh=1xxx|immb|00010|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["ssra.8B%5|2D"   , "Vd.T, Vn.T, #shift"                 , "X:0|Q|0|011110|immh!=0000|immb|00010|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["ssubl'2"        , "Vd.8H|4S|2D, Vn.8B%5, Vm.8B%5"      , "X:0|Q|0|01110|sz:2|1|Rm|0010|00|Rn|Rd"                , "ARMv8+ GRP59"],
@@ -1796,12 +1796,12 @@
     ["urshl"          , "Dd, Dn, Dm"                         , "X:01|1|11110|11|1|Rm|01010|1|Rn|Rd"                   , "ARMv8+ GRP54"],
     ["urshl.8B%5|2D"  , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|1|01110|sz:2|1|Rm|01010|1|Rn|Rd"                , "ARMv8+ GRP60"],
 
-    ["urshr"          , "Dd, Dn, #shift"                     , "X:01|1|111110|!=1|immb|00100|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["urshr"          , "Dd, Dn, #shift"                     , "X:01|1|111110|immh=1xxx|immb|00100|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["urshr.8B%5|2D"  , "Vd.T, Vn.T, #shift"                 , "X:0|Q|1|011110|immh!=0000|immb|00100|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["ursqrte.2S%"    , "Vd.T, Vn.T"                         , "X:0|Q|1|011101|sz|10000|11100|10|Rn|Rd"               , "ARMv8+ GRP61"],
 
-    ["ursra"          , "Dd, Dn, #shift"                     , "X:01|1|111110|!=1|immb|00110|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["ursra"          , "Dd, Dn, #shift"                     , "X:01|1|111110|immh=1xxx|immb|00110|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["ursra.8B%5|2D"  , "Vd.T, Vn.T, #shift"                 , "X:0|Q|1|011110|immh!=0000|immb|00110|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["ushl"           , "Dd, Dn, Dm"                         , "X:01|1|11110|11|1|Rm|01000|1|Rn|Rd"                   , "ARMv8+ GRP54"],
@@ -1809,13 +1809,13 @@
 
     ["ushll'2"        , "Vd.8H|4S|2D, Vn.8B%5, #shift"       , "X:0|Q|1|011110|immh!=0000|immb|10100|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
-    ["ushr"           , "Dd, Dn, #shift"                     , "X:01|1|111110|!=1|immb|:5|1|Rn|Rd"                    , "ARMv8+ GRP52"],
+    ["ushr"           , "Dd, Dn, #shift"                     , "X:01|1|111110|immh=1xxx|immb|:5|1|Rn|Rd"              , "ARMv8+ GRP52"],
     ["ushr.8B%5|2D"   , "Vd.T, Vn.T, #shift"                 , "X:0|Q|1|011110|immh!=0000|immb|:5|1|Rn|Rd"            , "ARMv8+ GRP57"],
 
     ["usqadd"         , "Bd%3, Bn%3"                         , "X:01|1|11110|sz:2|10000|00011|10|Rn|Rd"               , "ARMv8+ GRP55"],
     ["usqadd.8B%5|2D" , "Vd.T, Vn.T"                         , "X:0|Q|1|01110|sz:2|10000|00011|10|Rn|Rd"              , "ARMv8+ GRP61"],
 
-    ["usra"           , "Dd, Dn, #shift"                     , "X:01|1|111110|!=1|immb|00010|1|Rn|Rd"                 , "ARMv8+ GRP52"],
+    ["usra"           , "Dd, Dn, #shift"                     , "X:01|1|111110|immh=1xxx|immb|00010|1|Rn|Rd"           , "ARMv8+ GRP52"],
     ["usra.8B%5|2D"   , "Vd.T, Vn.T, #shift"                 , "X:0|Q|1|011110|immh!=0000|immb|00010|1|Rn|Rd"         , "ARMv8+ GRP57"],
 
     ["usubl'2"        , "Vd.8H|4S|2D, Vn.8B%5, Vm.8B%5"      , "X:0|Q|1|01110|sz:2|1|Rm|0010|00|Rn|Rd"                , "ARMv8+ GRP59"],
