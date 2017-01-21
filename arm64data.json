@@ -182,7 +182,7 @@
     { "X": "AArch64" }
   ],
   
-  "alias functions":[
+  "alias functions": [
     ["MoveWidePreferred" , "sf"  , "N"   , "imms" , "immr"],
     ["BFXPreferred"      , "sf"  , "opc" , "imms" , "immr"],
     ["SysOp"             , "?"   , "op1" , "CRm"  , "op2" ],
@@ -1213,7 +1213,7 @@
     ["rev32.8B%3"     , "Vd.T, Vn.T"                         , "X:0|Q|1|01110|sz:2|10000|:5|10|Rn|Rd"                 , "ARMv8+ GRP61"],
 
     ["rev64.8B%5"     , "Vd.T, Vn.T"                         , "X:0|Q|0|01110|sz:2|10000|:5|10|Rn|Rd"                 , "ARMv8+ GRP61"],
-    ["rev64"          , "Xd, Xn"                             , "X:1|1|0|11010110|:5|000011|Rn|Rd"                     , "ARMv8+ GRP40 ALIAS_OF=rev PREFERRED_IF=NEVER"],
+    ["rev64"          , "Xd, Xn"                             , "X:1|1|0|11010110|:5|000011|Rn|Rd"                     , "ARMv8+ GRP40 PSEUDO_OF=rev PREFERRED_IF=NEVER"],
 
     ["ror"            , "Wd, Ws, #shift"                     , "X:0|00|100111|0|0|Rm|imms=0xxxxx|Rn|Rd"               , "ARMv8+ GRP4 ALIAS_OF=extr PREFERRED_IF=Rn==Rm"],
     ["ror"            , "Xd, Xs, #shift"                     , "X:1|00|100111|1|0|Rm|imms|Rn|Rd"                      , "ARMv8+ GRP4 ALIAS_OF=extr PREFERRED_IF=Rn==Rm"],
