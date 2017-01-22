@@ -163,8 +163,7 @@
 //   [0]        - Function's name.
 //   [1] .. [4] - Function's argument.
 // If argument is empty, it means that the function does not use it.
-// If argument = '?', it means that the argument is not fixed.
-// And is pushed to the function like this: "PREFERRED_IF=Function:Argument".
+// Arguments are pushed to the function from instruction meta-data.
 // For more information about how to implement those functions,
 // refer to the ARM-ARM doc. They provide a c-like implementation.
 
@@ -174,7 +173,7 @@
 // - Add group to instructions. => Done :)
 // - Add aliases instructions to the main instruction. => Done :)
 // - MOV (from general) alias is missing ! => Done :)
-// - Check MOV (inverted wide immediate) alias instruction.
+// - Check MOV (inverted wide immediate) alias instruction. => Done :)
 
 
 {
