@@ -189,8 +189,8 @@
   "alias functions": [
     ["MoveWidePreferred" , "sf"  , "N"   , "imms" , "immr"],
     ["BFXPreferred"      , "sf"  , "opc" , "imms" , "immr"],
-    ["SysOp"             , "?"   , "op1" , "CRm"  , "op2" ],
-    ["BitCount"          , "?"   , ""    , ""     , ""]
+    ["SysOp"             , "op1" , "CRn" , "CRm"  , "op2" ],
+    ["BitCount"          , "X"   , ""    , ""     , ""]
   ],
 
   "groups": [
