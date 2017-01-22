@@ -6,6 +6,10 @@
 
 // CHANGE LOG
 // ----------
+// 22/1/17:
+// - Unused fields in opcodes are now all hidden.
+// - Fixed syntax for MOV (wide immediate) && MOV (bitmask immediate) instructions.
+//
 // 21/1/17:
 // - Added aliases instructions info.
 // - Added groups to aliases instructions.
@@ -197,7 +201,7 @@
     ["GRP4"  , "Extract"                        , "X:sf|op21:2|100111|N|o0|Rm|imms|Rn|Rd"                      , "GRP1"],
     ["GRP5"  , "LogicalImm"                     , "X:sf|opc:2|100100|N|immr|imms|Rn|Rd"                        , "GRP1"],
     ["GRP6"  , "MoveWideImm"                    , "X:sf|opc:2|100101|shift|imm16|Rd"                           , "GRP1"],
-    ["GRP7"  , "RelAddressing"                  , "X:op|imm2|10000|imm19|Rd"                                   , "GRP1"],
+    ["GRP7"  , "RelAddressing"                  , "X:op|immlo|10000|immhi|Rd"                                  , "GRP1"],
     ["GRP8"  , "BranchesExceptionSystem"        , "X:op0:3|101|op1:4|xxxxxxxxxxxxxxxxxxxxxx"                   , "GRP0"],
     ["GRP9"  , "CompareBranchImm"               , "X:sf|011010|op|imm19|Rt"                                    , "GRP8"],
     ["GRP10" , "ConditionalBranchImm"           , "X:0101010|o1|imm19|o0|cond"                                 , "GRP8"],
@@ -298,9 +302,9 @@
 
     ["addv"           , "Bd%2, Vn.8B%3|4S"                   , "X:0|Q|0|01110|sz:2|11000|11011|10|Rn|Rd"              , "ARMv8+ GRP45"],
 
-    ["adr"            , "Xd, label21"                        , "X:0|imm2|10000|imm19|Rd"                              , "ARMv8+ GRP7"],
+    ["adr"            , "Xd, offset21"                       , "X:0|immlo|10000|immhi|Rd"                             , "ARMv8+ GRP7"],
 
-    ["adrp"           , "Xd, label21*4096"                   , "X:1|imm2|10000|imm19|Rd"                              , "ARMv8+ GRP7"],
+    ["adrp"           , "Xd, offset21*4096"                  , "X:1|immlo|10000|immhi|Rd"                             , "ARMv8+ GRP7"],
 
     ["aesd.16B"       , "Vd.T, Vn.T"                         , "X:01001110|00|10100|00101|10|Rn|Rd"                   , "ARMv8+ GRP63"],
 
@@ -320,18 +324,18 @@
     ["andS"           , "Xd, Xn, Xm{, shift #amount}"        , "X:1|11|01010|shift|0|Rm|imm6|Rn|Rd"                   , "ARMv8+ GRP43 NZCV=WWZZ"],
     ["and.8B%"        , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|00|1|Rm|00011|1|Rn|Rd"                  , "ARMv8+ GRP60"],
 
-    ["asr"            , "Wd, Wn, #shift"                     , "X:0|00|100110|0|immr|imms=011111|Rn|Rd"               , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
-    ["asr"            , "Xd, Xn, #shift"                     , "X:1|00|100110|1|immr|imms=111111|Rn|Rd"               , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["asr"            , "Wd, Wn, #shift"                     , "X:0|00|100110|0|immr|011111|Rn|Rd"                    , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["asr"            , "Xd, Xn, #shift"                     , "X:1|00|100110|1|immr|111111|Rn|Rd"                    , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
     ["asr"            , "Wd, Wn, Wm"                         , "X:0|0|0|11010110|Rm|001010|Rn|Rd"                     , "ARMv8+ GRP41 ALIAS_OF=asrv PREFERRED_IF=ALWAYS"],
     ["asr"            , "Xd, Xn, Xm"                         , "X:1|0|0|11010110|Rm|001010|Rn|Rd"                     , "ARMv8+ GRP41 ALIAS_OF=asrv PREFERRED_IF=ALWAYS"],
 
     ["asrv"           , "Wd, Wn, Wm"                         , "X:0|0|0|11010110|Rm|001010|Rn|Rd"                     , "ARMv8+ GRP41"],
     ["asrv"           , "Xd, Xn, Xm"                         , "X:1|0|0|11010110|Rm|001010|Rn|Rd"                     , "ARMv8+ GRP41"],
 
-    ["at"             , "at_op, Xt"                          , "X:1101010100|0|01|op1|CRn=0111|CRm=100x|op2|Rt"       , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:0111==Sys_AT"],
+    ["at"             , "at_op, Xt"                          , "X:1101010100|0|01|op1|0111|CRm=100x|op2|Rt"           , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:op1:0111:CRm:op2==Sys_AT"],
 
-    ["b"              , "label26*4"                          , "X:0|00101|imm26"                                      , "ARMv8+ GRP14"],
-    ["b%c"            , "label19*4"                          , "X:0101010|0|imm19|0|cond"                             , "ARMv8+ GRP10"],
+    ["b"              , "offset26*4"                         , "X:0|00101|imm26"                                      , "ARMv8+ GRP14"],
+    ["b%c"            , "offset19*4"                         , "X:0101010|0|imm19|0|cond"                             , "ARMv8+ GRP10"],
 
     ["bfi"            , "Wd, Wn, #lsb, #width"               , "X:0|01|100110|0|immr|imms|Rn!=11111|Rd"               , "ARMv8+ GRP3 ALIAS_OF=bfm PREFERRED_IF=imms<immr"],
     ["bfi"            , "Xd, Xn, #lsb, #width"               , "X:1|01|100110|1|immr|imms|Rn!=11111|Rd"               , "ARMv8+ GRP3 ALIAS_OF=bfm PREFERRED_IF=imms<immr"],
@@ -354,7 +358,7 @@
 
     ["bit.8B%"        , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|1|01110|10|1|Rm|00011|1|Rn|Rd"                  , "ARMv8+ GRP60"],
 
-    ["bl"             , "label26*4"                          , "X:1|00101|imm26"                                      , "ARMv8+ GRP14"],
+    ["bl"             , "offset26*4"                         , "X:1|00101|imm26"                                      , "ARMv8+ GRP14"],
 
     ["blr"            , "Xn"                                 , "X:1101011|0001|11111|:6|Rn|:5"                        , "ARMv8+ GRP15"],
 
@@ -364,11 +368,11 @@
 
     ["bsl.8B%"        , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|1|01110|01|1|Rm|00011|1|Rn|Rd"                  , "ARMv8+ GRP60"],
 
-    ["cbnz"           , "Wt, label19*4"                      , "X:0|011010|1|imm19|Rt"                                , "ARMv8+ GRP9"],
-    ["cbnz"           , "Xt, label19*4"                      , "X:1|011010|1|imm19|Rt"                                , "ARMv8+ GRP9"],
+    ["cbnz"           , "Wt, offset19*4"                     , "X:0|011010|1|imm19|Rt"                                , "ARMv8+ GRP9"],
+    ["cbnz"           , "Xt, offset19*4"                     , "X:1|011010|1|imm19|Rt"                                , "ARMv8+ GRP9"],
 
-    ["cbz"            , "Wt, label19*4"                      , "X:0|011010|0|imm19|Rt"                                , "ARMv8+ GRP9"],
-    ["cbz"            , "Xt, label19*4"                      , "X:1|011010|0|imm19|Rt"                                , "ARMv8+ GRP9"],
+    ["cbz"            , "Wt, offset19*4"                     , "X:0|011010|0|imm19|Rt"                                , "ARMv8+ GRP9"],
+    ["cbz"            , "Xt, offset19*4"                     , "X:1|011010|0|imm19|Rt"                                , "ARMv8+ GRP9"],
 
     ["ccmn"           , "Wn, #imm5, #nzcv, cond"             , "X:0|0|1|11010010|imm5|cond|1|0|Rn|0|nzcv"             , "ARMv8+ GRP37 NZCV=W"],
     ["ccmn"           , "Xn, #imm5, #nzcv, cond"             , "X:1|0|1|11010010|imm5|cond|1|0|Rn|0|nzcv"             , "ARMv8+ GRP37 NZCV=W"],
@@ -423,19 +427,19 @@
     ["cmlt"           , "Dd, Dn, #0"                         , "X:01|0|11110|11|10000|01010|10|Rn|Rd"                 , "ARMv8+ GRP55"],
     ["cmlt.8B%5|2D"   , "Vd.T, Vn.T, #0"                     , "X:0|Q|0|01110|sz:2|10000|01010|10|Rn|Rd"              , "ARMv8+ GRP61"],
 
-    ["cmn"            , "$Wn, #imm12{, LSL #0|12}"           , "X:0|0|1|10001|shift|imm12|Rn|Rd=11111"                , "ARMv8+ GRP2 NZCV=W ALIAS_OF=addS"],
-    ["cmn"            , "$Xn, #imm12{, LSL #0|12}"           , "X:1|0|1|10001|shift|imm12|Rn|Rd=11111"                , "ARMv8+ GRP2 NZCV=W ALIAS_OF=addS"],
-    ["cmn"            , "$Wn, Wm{, extend {#amount}}"        , "X:0|0|1|01011|00|1|Rm|extend|imm3|Rn|Rd=11111"        , "ARMv8+ GRP34 NZCV=W ALIAS_OF=addS"],
-    ["cmn"            , "$Xn, Rm{, extend {#amount}}"        , "X:1|0|1|01011|00|1|Rm|extend|imm3|Rn|Rd=11111"        , "ARMv8+ GRP34 NZCV=W ALIAS_OF=addS"],
-    ["cmn"            , "Wn, Wm{, shift #amount}"            , "X:0|0|1|01011|shift|0|Rm|imm6|Rn|Rd=11111"            , "ARMv8+ GRP35 NZCV=W ALIAS_OF=addS"],
-    ["cmn"            , "Xn, Xm{, shift #amount}"            , "X:1|0|1|01011|shift|0|Rm|imm6|Rn|Rd=11111"            , "ARMv8+ GRP35 NZCV=W ALIAS_OF=addS"],
+    ["cmn"            , "$Wn, #imm12{, LSL #0|12}"           , "X:0|0|1|10001|shift|imm12|Rn|11111"                   , "ARMv8+ GRP2 NZCV=W ALIAS_OF=addS"],
+    ["cmn"            , "$Xn, #imm12{, LSL #0|12}"           , "X:1|0|1|10001|shift|imm12|Rn|11111"                   , "ARMv8+ GRP2 NZCV=W ALIAS_OF=addS"],
+    ["cmn"            , "$Wn, Wm{, extend {#amount}}"        , "X:0|0|1|01011|00|1|Rm|extend|imm3|Rn|11111"           , "ARMv8+ GRP34 NZCV=W ALIAS_OF=addS"],
+    ["cmn"            , "$Xn, Rm{, extend {#amount}}"        , "X:1|0|1|01011|00|1|Rm|extend|imm3|Rn|11111"           , "ARMv8+ GRP34 NZCV=W ALIAS_OF=addS"],
+    ["cmn"            , "Wn, Wm{, shift #amount}"            , "X:0|0|1|01011|shift|0|Rm|imm6|Rn|11111"               , "ARMv8+ GRP35 NZCV=W ALIAS_OF=addS"],
+    ["cmn"            , "Xn, Xm{, shift #amount}"            , "X:1|0|1|01011|shift|0|Rm|imm6|Rn|11111"               , "ARMv8+ GRP35 NZCV=W ALIAS_OF=addS"],
 
-    ["cmp"            , "$Wn, #imm12{, LSL #0|12}"           , "X:0|1|1|10001|shift|imm12|Rn|Rd=11111"                , "ARMv8+ GRP2 NZCV=W ALIAS_OF=subS"],
-    ["cmp"            , "$Xn, #imm12{, LSL #0|12}"           , "X:1|1|1|10001|shift|imm12|Rn|Rd=11111"                , "ARMv8+ GRP2 NZCV=W ALIAS_OF=subS"],
-    ["cmp"            , "$Wn, Wm{, extend {#amount}}"        , "X:0|1|1|01011|00|1|Rm|extend|imm3|Rn|Rd=11111"        , "ARMv8+ GRP34 NZCV=W ALIAS_OF=subS"],
-    ["cmp"            , "$Xn, Rm{, extend {#amount}}"        , "X:1|1|1|01011|00|1|Rm|extend|imm3|Rn|Rd=11111"        , "ARMv8+ GRP34 NZCV=W ALIAS_OF=subS"],
-    ["cmp"            , "Wn, Wm{, shift #amount}"            , "X:0|1|1|01011|shift|0|Rm|imm6|Rn|Rd=11111"            , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
-    ["cmp"            , "Xn, Xm{, shift #amount}"            , "X:1|1|1|01011|shift|0|Rm|imm6|Rn|Rd=11111"            , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
+    ["cmp"            , "$Wn, #imm12{, LSL #0|12}"           , "X:0|1|1|10001|shift|imm12|Rn|11111"                   , "ARMv8+ GRP2 NZCV=W ALIAS_OF=subS"],
+    ["cmp"            , "$Xn, #imm12{, LSL #0|12}"           , "X:1|1|1|10001|shift|imm12|Rn|11111"                   , "ARMv8+ GRP2 NZCV=W ALIAS_OF=subS"],
+    ["cmp"            , "$Wn, Wm{, extend {#amount}}"        , "X:0|1|1|01011|00|1|Rm|extend|imm3|Rn|11111"           , "ARMv8+ GRP34 NZCV=W ALIAS_OF=subS"],
+    ["cmp"            , "$Xn, Rm{, extend {#amount}}"        , "X:1|1|1|01011|00|1|Rm|extend|imm3|Rn|11111"           , "ARMv8+ GRP34 NZCV=W ALIAS_OF=subS"],
+    ["cmp"            , "Wn, Wm{, shift #amount}"            , "X:0|1|1|01011|shift|0|Rm|imm6|Rn|11111"               , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
+    ["cmp"            , "Xn, Xm{, shift #amount}"            , "X:1|1|1|01011|shift|0|Rm|imm6|Rn|11111"               , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
 
     ["cmtst"          , "Dd, Dn, Dm"                         , "X:01|0|11110|11|1|Rm|10001|1|Rn|Rd"                   , "ARMv8+ GRP54"],
     ["cmtst.8B%5|2D"  , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|sz:2|1|Rm|10001|1|Rn|Rd"                , "ARMv8+ GRP60"],
@@ -464,11 +468,11 @@
     ["csel"           , "Wd, Wn, Wm, cond"                   , "X:0|0|0|11010100|Rm|cond|00|Rn|Rd"                    , "ARMv8+ GRP39"],
     ["csel"           , "Xd, Xn, Xm, cond"                   , "X:1|0|0|11010100|Rm|cond|00|Rn|Rd"                    , "ARMv8+ GRP39"],
 
-    ["cset"           , "Wd, cond"                           , "X:0|0|0|11010100|Rm=11111|cond!=111x|01|Rn=11111|Rd"  , "ARMv8+ GRP39 ALIAS_OF=csinc"],
-    ["cset"           , "Xd, cond"                           , "X:1|0|0|11010100|Rm=11111|cond!=111x|01|Rn=11111|Rd"  , "ARMv8+ GRP39 ALIAS_OF=csinc"],
+    ["cset"           , "Wd, cond"                           , "X:0|0|0|11010100|11111|cond!=111x|01|11111|Rd"        , "ARMv8+ GRP39 ALIAS_OF=csinc"],
+    ["cset"           , "Xd, cond"                           , "X:1|0|0|11010100|11111|cond!=111x|01|11111|Rd"        , "ARMv8+ GRP39 ALIAS_OF=csinc"],
 
-    ["csetm"          , "Wd, cond"                           , "X:0|1|0|11010100|Rm=11111|cond!=111x|00|Rn=11111|Rd"  , "ARMv8+ GRP39 ALIAS_OF=csinv"],
-    ["csetm"          , "Xd, cond"                           , "X:1|1|0|11010100|Rm=11111|cond!=111x|00|Rn=11111|Rd"  , "ARMv8+ GRP39 ALIAS_OF=csinv"],
+    ["csetm"          , "Wd, cond"                           , "X:0|1|0|11010100|11111|cond!=111x|00|11111|Rd"        , "ARMv8+ GRP39 ALIAS_OF=csinv"],
+    ["csetm"          , "Xd, cond"                           , "X:1|1|0|11010100|11111|cond!=111x|00|11111|Rd"        , "ARMv8+ GRP39 ALIAS_OF=csinv"],
 
     ["csinc"          , "Wd, Wn, Wm, cond"                   , "X:0|0|0|11010100|Rm|cond|01|Rn|Rd"                    , "ARMv8+ GRP39"],
     ["csinc"          , "Xd, Xn, Xm, cond"                   , "X:1|0|0|11010100|Rm|cond|01|Rn|Rd"                    , "ARMv8+ GRP39"],
@@ -479,7 +483,7 @@
     ["csneg"          , "Wd, Wn, Wm, cond"                   , "X:0|1|0|11010100|Rm|cond|01|Rn|Rd"                    , "ARMv8+ GRP39"],
     ["csneg"          , "Xd, Xn, Xm, cond"                   , "X:1|1|0|11010100|Rm|cond|01|Rn|Rd"                    , "ARMv8+ GRP39"],
 
-    ["dc"             , "dc_op, Xt"                          , "X:1101010100|0|01|op1|CRn=0111|CRm|op2|Rt"            , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:0111==Sys_DC"],
+    ["dc"             , "dc_op, Xt"                          , "X:1101010100|0|01|op1|0111|CRm|op2|Rt"                , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:op1:0111:CRm:op2==Sys_DC"],
 
     ["dcps1"          , "{#imm16}"                           , "X:11010100|101|imm16|:3|01"                           , "ARMv8+ GRP11"],
 
@@ -817,7 +821,7 @@
 
     ["hvc"            , "#imm16"                             , "X:11010100|:3|imm16|:3|10"                            , "ARMv8+ GRP11"],
 
-    ["ic"             , "ic_op{, Xt}"                        , "X:1101010100|0|01|op1|CRn=0111|CRm|op2|Rt"            , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:0111==Sys_IC"],
+    ["ic"             , "ic_op{, Xt}"                        , "X:1101010100|0|01|op1|0111|CRm|op2|Rt"                , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:op1:0111:CRm:op2==Sys_IC"],
 
     ["ins"            , "Vd.B%3[idx], Rn"                    , "X:0|1|0|01110000|imm5|0|0011|1|Rn|Rd"                 , "ARMv8+ GRP46"],
     ["ins.B%3"        , "Vd.T[idx1], Vn.T[idx2]"             , "X:0|1|1|01110000|imm5|0|imm4|1|Rn|Rd"                 , "ARMv8+ GRP46"],
@@ -956,11 +960,11 @@
     ["ldpsw"          , "Xt1, Xt2, [$Xn], #imm7*4"           , "X:01|101|0|001|1|imm7|Rt2|Rn|Rt"                      , "ARMv8+ GRP31"],
     ["ldpsw"          , "Xt1, Xt2, [$Xn, #imm7*4]!"          , "X:01|101|0|011|1|imm7|Rt2|Rn|Rt"                      , "ARMv8+ GRP32"],
 
-    ["ldr"            , "Wt, label19*4"                      , "X:00|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
-    ["ldr"            , "St, label19*4"                      , "X:00|011|1|00|imm19|Rt"                               , "ARMv8+ GRP21"],
-    ["ldr"            , "Xt, label19*4"                      , "X:01|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
-    ["ldr"            , "Dt, label19*4"                      , "X:01|011|1|00|imm19|Rt"                               , "ARMv8+ GRP21"],
-    ["ldr"            , "Qt, label19*4"                      , "X:10|011|1|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["ldr"            , "Wt, offset19*4"                     , "X:00|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["ldr"            , "St, offset19*4"                     , "X:00|011|1|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["ldr"            , "Xt, offset19*4"                     , "X:01|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["ldr"            , "Dt, offset19*4"                     , "X:01|011|1|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["ldr"            , "Qt, offset19*4"                     , "X:10|011|1|00|imm19|Rt"                               , "ARMv8+ GRP21"],
     ["ldr"            , "Bt, [$Xn], #simm9"                  , "X:00|111|1|00|01|0|imm9|01|Rn|Rt"                     , "ARMv8+ GRP24"],
     ["ldr"            , "Qt, [$Xn], #simm9"                  , "X:00|111|1|00|11|0|imm9|01|Rn|Rt"                     , "ARMv8+ GRP24"],
     ["ldr"            , "Ht, [$Xn], #simm9"                  , "X:01|111|1|00|01|0|imm9|01|Rn|Rt"                     , "ARMv8+ GRP24"],
@@ -1022,7 +1026,7 @@
     ["ldrsh"          , "Xt, [$Xn{, #pimm12*2}]"             , "X:01|111|0|01|10|imm12|Rn|Rt"                         , "ARMv8+ GRP29"],
     ["ldrsh"          , "Wt, [$Xn{, #pimm12*2}]"             , "X:01|111|0|01|11|imm12|Rn|Rt"                         , "ARMv8+ GRP29"],
 
-    ["ldrsw"          , "Xt, label19*4"                      , "X:10|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["ldrsw"          , "Xt, offset19*4"                     , "X:10|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
     ["ldrsw"          , "Xt, [$Xn], #simm9"                  , "X:10|111|0|00|10|0|imm9|01|Rn|Rt"                     , "ARMv8+ GRP24"],
     ["ldrsw"          , "Xt, [$Xn, #simm9]!"                 , "X:10|111|0|00|10|0|imm9|11|Rn|Rt"                     , "ARMv8+ GRP25"],
     ["ldrsw"          , "Xt, [$Xn, Wm%{, extend {#0|2}}]"    , "X:10|111|0|00|10|1|Rm|extend|S|10|Rn|Rt"              , "ARMv8+ GRP26"],
@@ -1081,8 +1085,8 @@
     ["lslv"           , "Wd, Wn, Wm"                         , "X:0|0|0|11010110|Rm|001000|Rn|Rd"                     , "ARMv8+ GRP41"],
     ["lslv"           , "Xd, Xn, Xm"                         , "X:1|0|0|11010110|Rm|001000|Rn|Rd"                     , "ARMv8+ GRP41"],
 
-    ["lsr"            , "Wd, Wn, #shift"                     , "X:0|10|100110|0|immr|imms=011111|Rn|Rd"               , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
-    ["lsr"            , "Xd, Xn, #shift"                     , "X:1|10|100110|1|immr|imms=111111|Rn|Rd"               , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
+    ["lsr"            , "Wd, Wn, #shift"                     , "X:0|10|100110|0|immr|011111|Rn|Rd"                    , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
+    ["lsr"            , "Xd, Xn, #shift"                     , "X:1|10|100110|1|immr|111111|Rn|Rd"                    , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
     ["lsr"            , "Wd, Wn, Wm"                         , "X:0|0|0|11010110|Rm|001001|Rn|Rd"                     , "ARMv8+ GRP41 ALIAS_OF=lsrv PREFERRED_IF=ALWAYS"],
     ["lsr"            , "Xd, Xn, Xm"                         , "X:1|0|0|11010110|Rm|001001|Rn|Rd"                     , "ARMv8+ GRP41 ALIAS_OF=lsrv PREFERRED_IF=ALWAYS"],
 
@@ -1098,22 +1102,22 @@
     ["mls"            , "Vd.4H%3, Vn.4H%3, Vm.H%[idx]"       , "X:0|Q|1|01111|sz!=00|L|M|Rm:4|0100|H|0|Rn|Rd"         , "ARMv8+ GRP62"],
     ["mls.8B%5"       , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|1|01110|sz:2|1|Rm|10010|1|Rn|Rd"                , "ARMv8+ GRP60"],
 
-    ["mneg"           , "Wd, Wn, Wm"                         , "X:0|00|11011|:3|Rm|1|Ra=11111|Rn|Rd"                  , "ARMv8+ GRP42 ALIAS_OF=msub"],
-    ["mneg"           , "Xd, Xn, Xm"                         , "X:1|00|11011|:3|Rm|1|Ra=11111|Rn|Rd"                  , "ARMv8+ GRP42 ALIAS_OF=msub"],
+    ["mneg"           , "Wd, Wn, Wm"                         , "X:0|00|11011|:3|Rm|1|11111|Rn|Rd"                     , "ARMv8+ GRP42 ALIAS_OF=msub"],
+    ["mneg"           , "Xd, Xn, Xm"                         , "X:1|00|11011|:3|Rm|1|11111|Rn|Rd"                     , "ARMv8+ GRP42 ALIAS_OF=msub"],
 
-    ["mov"            , "$Wd, $Wn"                           , "X:0|0|0|10001|shift=00|imm12=000000000000|Rn|Rd"      , "ARMv8+ GRP2 ALIAS_OF=add PREFERRED_IF=Rd==11111||Rn==11111"],
-    ["mov"            , "$Xd, $Xn"                           , "X:1|0|0|10001|shift=00|imm12=000000000000|Rn|Rd"      , "ARMv8+ GRP2 ALIAS_OF=add PREFERRED_IF=Rd==11111||Rn==11111"],
-    ["mov"            , "$Wd, #imm12"                        , "X:0|01|100100|0|immr|imms|Rn=11111|Rd"                , "ARMv8+ GRP5 ALIAS_OF=orr PREFERRED_IF=MoveWidePreferred==0"],
-    ["mov"            , "$Xd, #imm13"                        , "X:1|01|100100|N|immr|imms|Rn=11111|Rd"                , "ARMv8+ GRP5 ALIAS_OF=orr PREFERRED_IF=MoveWidePreferred==0"],
-    ["mov"            , "Wd, #imm16 LSL #amount*16"          , "X:0|00|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movn PREFERRED_IF=imm16!=1111111111111111"],
-    ["mov"            , "Wd, #imm16 LSL #amount*16"          , "X:0|10|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movz"],
-    ["mov"            , "Xd, #imm16 LSL #amount*16"          , "X:1|00|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movn"],
-    ["mov"            , "Xd, #imm16 LSL #amount*16"          , "X:1|10|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movz"],
-    ["mov"            , "Wd, Wm"                             , "X:0|01|01010|shift=00|0|Rm|imm6=000000|Rn=11111|Rd"   , "ARMv8+ GRP43 ALIAS_OF=orr"],
-    ["mov"            , "Xd, Xm"                             , "X:1|01|01010|shift=00|0|Rm|imm6=000000|Rn=11111|Rd"   , "ARMv8+ GRP43 ALIAS_OF=orr"],
-    ["mov"            , "Wd, Vn.S[idx]"                      , "X:0|0|0|01110000|imm5=x1000|0|0111|1|Rn|Rd"           , "ARMv8+ GRP46 ALIAS_OF=umov"],
+    ["mov"            , "$Wd, $Wn"                           , "X:0|0|0|10001|00|:12|Rn|Rd"                           , "ARMv8+ GRP2 ALIAS_OF=add PREFERRED_IF=Rd==11111||Rn==11111"],
+    ["mov"            , "$Xd, $Xn"                           , "X:1|0|0|10001|00|:12|Rn|Rd"                           , "ARMv8+ GRP2 ALIAS_OF=add PREFERRED_IF=Rd==11111||Rn==11111"],
+    ["mov"            , "$Wd, #bimm12"                       , "X:0|01|100100|0|immr|imms|11111|Rd"                   , "ARMv8+ GRP5 ALIAS_OF=orr PREFERRED_IF=MoveWidePreferred:0:0:imms:immr==0"],
+    ["mov"            , "$Xd, #bimm13"                       , "X:1|01|100100|N|immr|imms|11111|Rd"                   , "ARMv8+ GRP5 ALIAS_OF=orr PREFERRED_IF=MoveWidePreferred:1:N:imms:immr==0"],
+    ["mov"            , "Wd, #nimm16"                        , "X:0|00|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movn PREFERRED_IF=imm16!=1111111111111111"],
+    ["mov"            , "Wd, #imm16"                         , "X:0|10|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movz"],
+    ["mov"            , "Xd, #nimm16"                        , "X:1|00|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movn"],
+    ["mov"            , "Xd, #imm16"                         , "X:1|10|100101|shift=00|imm16!=0000000000000000|Rd"    , "ARMv8+ GRP6 ALIAS_OF=movz"],
+    ["mov"            , "Wd, Wm"                             , "X:0|01|01010|00|0|Rm|:6|11111|Rd"                     , "ARMv8+ GRP43 ALIAS_OF=orr"],
+    ["mov"            , "Xd, Xm"                             , "X:1|01|01010|00|0|Rm|:6|11111|Rd"                     , "ARMv8+ GRP43 ALIAS_OF=orr"],
+    ["mov"            , "Wd, Vn.S[idx]"                      , "X:0|0|0|01110000|x1000|0|0111|1|Rn|Rd"                , "ARMv8+ GRP46 ALIAS_OF=umov"],
     ["mov"            , "Vd.B%3[idx], Rn"                    , "X:0|1|0|01110000|imm5|0|0011|1|Rn|Rd"                 , "ARMv8+ GRP46 ALIAS_OF=ins PREFERRED_IF=ALWAYS"],
-    ["mov"            , "Xd, Vn.D[idx]"                      , "X:0|1|0|01110000|imm5=x1000|0|0111|1|Rn|Rd"           , "ARMv8+ GRP46 ALIAS_OF=umov"],
+    ["mov"            , "Xd, Vn.D[idx]"                      , "X:0|1|0|01110000|x1000|0|0111|1|Rn|Rd"                , "ARMv8+ GRP46 ALIAS_OF=umov"],
     ["mov"            , "Bd%3, Vn.B%3[idx]"                  , "X:01|0|11110000|imm5|0|:4|1|Rn|Rd"                    , "ARMv8+ GRP50 ALIAS_OF=dup PREFERRED_IF=ALWAYS"],
     ["mov"            , "Bd%3, Vn.B%3[idx]"                  , "X:01|0|11110000|imm5|0|:4|1|Rn|Rd"                    , "ARMv8+ GRP50 ALIAS_OF=dup PREFERRED_IF=ALWAYS"],
     ["mov.B%3"        , "Vd.T[idx1], Vn.T[idx2]"             , "X:0|1|1|01110000|imm5|0|imm4|1|Rn|Rd"                 , "ARMv8+ GRP46 ALIAS_OF=ins PREFERRED_IF=ALWAYS"],
@@ -1145,11 +1149,11 @@
 
     ["mul"            , "Vd.4H%3, Vn.4H%3, Vm.H%[idx]"       , "X:0|Q|0|01111|sz!=00|L|M|Rm:4|1000|H|0|Rn|Rd"         , "ARMv8+ GRP62"],
     ["mul.8B%5"       , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|0|01110|sz:2|1|Rm|10011|1|Rn|Rd"                , "ARMv8+ GRP60"],
-    ["mul"            , "Wd, Wn, Wm"                         , "X:0|00|11011|:3|Rm|0|Ra=11111|Rn|Rd"                  , "ARMv8+ GRP42 ALIAS_OF=madd"],
-    ["mul"            , "Xd, Xn, Xm"                         , "X:1|00|11011|:3|Rm|0|Ra=11111|Rn|Rd"                  , "ARMv8+ GRP42 ALIAS_OF=madd"],
+    ["mul"            , "Wd, Wn, Wm"                         , "X:0|00|11011|:3|Rm|0|11111|Rn|Rd"                     , "ARMv8+ GRP42 ALIAS_OF=madd"],
+    ["mul"            , "Xd, Xn, Xm"                         , "X:1|00|11011|:3|Rm|0|11111|Rn|Rd"                     , "ARMv8+ GRP42 ALIAS_OF=madd"],
 
-    ["mvn"            , "Wd, Wm{, shift #amount}"            , "X:0|01|01010|shift|1|Rm|imm6|Rn=11111|Rd"             , "ARMv8+ GRP43 ALIAS_OF=orn"],
-    ["mvn"            , "Xd, Xm{, shift #amount}"            , "X:1|01|01010|shift|1|Rm|imm6|Rn=11111|Rd"             , "ARMv8+ GRP43 ALIAS_OF=orn"],
+    ["mvn"            , "Wd, Wm{, shift #amount}"            , "X:0|01|01010|shift|1|Rm|imm6|11111|Rd"                , "ARMv8+ GRP43 ALIAS_OF=orn"],
+    ["mvn"            , "Xd, Xm{, shift #amount}"            , "X:1|01|01010|shift|1|Rm|imm6|11111|Rd"                , "ARMv8+ GRP43 ALIAS_OF=orn"],
     ["mvn.8B%"        , "Vd.T, Vn.T"                         , "X:0|Q|1|01110|00|10000|00101|10|Rn|Rd"                , "ARMv8+ GRP61 ALIAS_OF=not PREFERRED_IF=ALWAYS"],
 
     ["mvni"           , "Vd.2S%, #imm8{, LSL #0%3:8}"        , "X:0|Q|1|0111100000|a|b|c|0xx0|0|1|d|e|f|g|h|Rd"       , "ARMv8+ GRP48"],
@@ -1158,15 +1162,15 @@
 
     ["neg"            , "Dd, Dn"                             , "X:01|1|11110|11|10000|01011|10|Rn|Rd"                 , "ARMv8+ GRP55"],
     ["neg.8B%5|2D"    , "Vd.T, Vn.T"                         , "X:0|Q|1|01110|sz:2|10000|01011|10|Rn|Rd"              , "ARMv8+ GRP61"],
-    ["neg"            , "Wd, Wm{, shift #amount}"            , "X:0|1|0|01011|shift|0|Rm|imm6|Rn=11111|Rd"            , "ARMv8+ GRP35 ALIAS_OF=sub"],
-    ["neg"            , "Xd, Xm{, shift #amount}"            , "X:1|1|0|01011|shift|0|Rm|imm6|Rn=11111|Rd"            , "ARMv8+ GRP35 ALIAS_OF=sub"],
-    ["negS"           , "Wd, Wm{, shift #amount}"            , "X:0|1|1|01011|shift|0|Rm|imm6|Rn=11111|Rd"            , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
-    ["negS"           , "Xd, Xm{, shift #amount}"            , "X:1|1|1|01011|shift|0|Rm|imm6|Rn=11111|Rd"            , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
+    ["neg"            , "Wd, Wm{, shift #amount}"            , "X:0|1|0|01011|shift|0|Rm|imm6|11111|Rd"               , "ARMv8+ GRP35 ALIAS_OF=sub"],
+    ["neg"            , "Xd, Xm{, shift #amount}"            , "X:1|1|0|01011|shift|0|Rm|imm6|11111|Rd"               , "ARMv8+ GRP35 ALIAS_OF=sub"],
+    ["negS"           , "Wd, Wm{, shift #amount}"            , "X:0|1|1|01011|shift|0|Rm|imm6|11111|Rd"               , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
+    ["negS"           , "Xd, Xm{, shift #amount}"            , "X:1|1|1|01011|shift|0|Rm|imm6|11111|Rd"               , "ARMv8+ GRP35 NZCV=W ALIAS_OF=subS"],
 
-    ["ngc"            , "Wd, Wm"                             , "X:0|1|0|11010000|Rm|:6|Rn=11111|Rd"                   , "ARMv8+ GRP36 NZCV=UURU ALIAS_OF=sbc"],
-    ["ngc"            , "Xd, Xm"                             , "X:1|1|0|11010000|Rm|:6|Rn=11111|Rd"                   , "ARMv8+ GRP36 NZCV=UURU ALIAS_OF=sbc"],
-    ["ngcS"           , "Wd, Wm"                             , "X:0|1|1|11010000|Rm|:6|Rn=11111|Rd"                   , "ARMv8+ GRP36 NZCV=WWXW ALIAS_OF=sbcS"],
-    ["ngcS"           , "Xd, Xm"                             , "X:1|1|1|11010000|Rm|:6|Rn=11111|Rd"                   , "ARMv8+ GRP36 NZCV=WWXW ALIAS_OF=sbcS"],
+    ["ngc"            , "Wd, Wm"                             , "X:0|1|0|11010000|Rm|:6|11111|Rd"                      , "ARMv8+ GRP36 NZCV=UURU ALIAS_OF=sbc"],
+    ["ngc"            , "Xd, Xm"                             , "X:1|1|0|11010000|Rm|:6|11111|Rd"                      , "ARMv8+ GRP36 NZCV=UURU ALIAS_OF=sbc"],
+    ["ngcS"           , "Wd, Wm"                             , "X:0|1|1|11010000|Rm|:6|11111|Rd"                      , "ARMv8+ GRP36 NZCV=WWXW ALIAS_OF=sbcS"],
+    ["ngcS"           , "Xd, Xm"                             , "X:1|1|1|11010000|Rm|:6|11111|Rd"                      , "ARMv8+ GRP36 NZCV=WWXW ALIAS_OF=sbcS"],
 
     ["nop"            , ""                                   , "X:1101010100|0|00|011|0010|:4|:3|11111"               , "ARMv8+ GRP12"],
 
@@ -1188,7 +1192,7 @@
 
     ["pmull'2"        , "Vd.8H|1Q, Vn.8B%|1D%, Vm.8B%|1D%"   , "X:0|Q|0|01110|sz:2|1|Rm|1110|00|Rn|Rd"                , "ARMv8+ GRP59"],
 
-    ["prfm"           , "prfop, label19*4"                   , "X:11|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
+    ["prfm"           , "prfop, offset19*4"                  , "X:11|011|0|00|imm19|Rt"                               , "ARMv8+ GRP21"],
     ["prfm"           , "prfop, [$Xn, Wm%{, extend {#0|3}}]" , "X:11|111|0|00|10|1|Rm|extend|S|10|Rn|Rt"              , "ARMv8+ GRP26"],
     ["prfm"           , "prfop, [$Xn{, #pimm12*8}]"          , "X:11|111|0|01|10|imm12|Rn|Rt"                         , "ARMv8+ GRP29"],
 
@@ -1256,8 +1260,8 @@
     ["sbfm"           , "Wd, Wn, #immr, #imms"               , "X:0|00|100110|0|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3"],
     ["sbfm"           , "Xd, Xn, #immr, #imms"               , "X:1|00|100110|1|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3"],
 
-    ["sbfx"           , "Wd, Wn, #lsb, #width"               , "X:0|00|100110|0|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm PREFERRED_IF=BFXPreferred==1"],
-    ["sbfx"           , "Xd, Xn, #lsb, #width"               , "X:1|00|100110|1|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm PREFERRED_IF=BFXPreferred==1"],
+    ["sbfx"           , "Wd, Wn, #lsb, #width"               , "X:0|00|100110|0|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm PREFERRED_IF=BFXPreferred:0:0:imms:immr==1"],
+    ["sbfx"           , "Xd, Xn, #lsb, #width"               , "X:1|00|100110|1|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm PREFERRED_IF=BFXPreferred:1:0:imms:immr==1"],
 
     ["scvtf"          , "Sd%, Sn%, #fbits"                   , "X:01|0|111110|immh!=0000|immb|11100|1|Rn|Rd"          , "ARMv8+ GRP52"],
     ["scvtf"          , "Sd%, Sn%"                           , "X:01|0|111100|sz|10000|11101|10|Rn|Rd"                , "ARMv8+ GRP55"],
@@ -1335,7 +1339,7 @@
     ["smlsl'2"        , "Vd.8H|4S|2D, Vn.8B%5, Vm.8B%5"      , "X:0|Q|0|01110|sz:2|1|Rm|1010|00|Rn|Rd"                , "ARMv8+ GRP59"],
     ["smlsl'2"        , "Vd.4S|2D, Vn.4H%3, Vm.H%[idx]"      , "X:0|Q|0|01111|sz!=00|L|M|Rm:4|0110|H|0|Rn|Rd"         , "ARMv8+ GRP62"],
 
-    ["smnegl"         , "Xd, Wn, Wm"                         , "X:1|00|11011|001|Rm|1|Ra=11111|Rn|Rd"                 , "ARMv8+ GRP42 ALIAS_OF=smsubl"],
+    ["smnegl"         , "Xd, Wn, Wm"                         , "X:1|00|11011|001|Rm|1|11111|Rn|Rd"                    , "ARMv8+ GRP42 ALIAS_OF=smsubl"],
 
     ["smov"           , "Wd, Vn.B%[idx]"                     , "X:0|0|0|01110000|imm5|0|0101|1|Rn|Rd"                 , "ARMv8+ GRP46"],
     ["smov"           , "Xd, Vn.B%2[idx]"                    , "X:0|1|0|01110000|imm5|0|0101|1|Rn|Rd"                 , "ARMv8+ GRP46"],
@@ -1346,7 +1350,7 @@
 
     ["smull'2"        , "Vd.8H|4S|2D, Vn.8B%5, Vm.8B%5"      , "X:0|Q|0|01110|sz:2|1|Rm|1100|00|Rn|Rd"                , "ARMv8+ GRP59"],
     ["smull'2"        , "Vd.4S|2D, Vn.4H%3, Vm.H%[idx]"      , "X:0|Q|0|01111|sz!=00|L|M|Rm:4|1010|H|0|Rn|Rd"         , "ARMv8+ GRP62"],
-    ["smull"          , "Xd, Wn, Wm"                         , "X:1|00|11011|001|Rm|0|Ra=11111|Rn|Rd"                 , "ARMv8+ GRP42 ALIAS_OF=smaddl"],
+    ["smull"          , "Xd, Wn, Wm"                         , "X:1|00|11011|001|Rm|0|11111|Rn|Rd"                    , "ARMv8+ GRP42 ALIAS_OF=smaddl"],
 
     ["sqabs"          , "Bd%3, Bn%3"                         , "X:01|0|11110|sz:2|10000|00111|10|Rn|Rd"               , "ARMv8+ GRP55"],
     ["sqabs.8B%5|2D"  , "Vd.T, Vn.T"                         , "X:0|Q|0|01110|sz:2|10000|00111|10|Rn|Rd"              , "ARMv8+ GRP61"],
@@ -1647,15 +1651,15 @@
 
     ["svc"            , "#imm16"                             , "X:11010100|:3|imm16|:3|01"                            , "ARMv8+ GRP11"],
 
-    ["sxtb"           , "Wd, Wn"                             , "X:0|00|100110|0|immr=000000|imms=000111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
-    ["sxtb"           , "Xd, Wn"                             , "X:1|00|100110|1|immr=000000|imms=000111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["sxtb"           , "Wd, Wn"                             , "X:0|00|100110|0|:6|000111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["sxtb"           , "Xd, Wn"                             , "X:1|00|100110|1|:6|000111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
 
-    ["sxth"           , "Wd, Wn"                             , "X:0|00|100110|0|immr=000000|imms=001111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
-    ["sxth"           , "Xd, Wn"                             , "X:1|00|100110|1|immr=000000|imms=001111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["sxth"           , "Wd, Wn"                             , "X:0|00|100110|0|:6|001111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["sxth"           , "Xd, Wn"                             , "X:1|00|100110|1|:6|001111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
 
-    ["sxtl'2"         , "Vd.8H|4S|2D, Vn.8B%5"               , "X:0|Q|0|011110|immh!=0000|immb=000|10100|1|Rn|Rd"     , "ARMv8+ GRP57 ALIAS_OF=sshll'2 PREFERRED_IF=BitCount:immh==1"],
+    ["sxtl'2"         , "Vd.8H|4S|2D, Vn.8B%5"               , "X:0|Q|0|011110|immh!=0000|:3|10100|1|Rn|Rd"           , "ARMv8+ GRP57 ALIAS_OF=sshll'2 PREFERRED_IF=BitCount:immh==1"],
 
-    ["sxtw"           , "Xd, Wn"                             , "X:1|00|100110|1|immr=000000|imms=011111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
+    ["sxtw"           , "Xd, Wn"                             , "X:1|00|100110|1|:6|011111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=sbfm"],
 
     ["sys"            , "#op1, Cn, Cm, #op2{, Xt}"           , "X:1101010100|0|01|op1|CRn|CRm|op2|Rt"                 , "ARMv8+ GRP12"],
 
@@ -1666,25 +1670,25 @@
     ["tbl.8B%"        , "Vd.T, {Vn.16B}%2, Vm.T"             , "X:0|Q|001110|00|0|Rm|0|10|0|00|Rn|Rd"                 , "ARMv8+ GRP58"],
     ["tbl.8B%"        , "Vd.T, {Vn.16B}%3, Vm.T"             , "X:0|Q|001110|00|0|Rm|0|11|0|00|Rn|Rd"                 , "ARMv8+ GRP58"],
 
-    ["tbnz"           , "Rt, #imm6, label14*4"               , "X:b5|011011|1|b40|imm14|Rt"                           , "ARMv8+ GRP13"],
+    ["tbnz"           , "Rt, #imm6, offset14*4"              , "X:b5|011011|1|b40|imm14|Rt"                           , "ARMv8+ GRP13"],
 
     ["tbx.8B%"        , "Vd.T, {Vn.16B}%0, Vm.T"             , "X:0|Q|001110|00|0|Rm|0|00|1|00|Rn|Rd"                 , "ARMv8+ GRP58"],
     ["tbx.8B%"        , "Vd.T, {Vn.16B}%1, Vm.T"             , "X:0|Q|001110|00|0|Rm|0|01|1|00|Rn|Rd"                 , "ARMv8+ GRP58"],
     ["tbx.8B%"        , "Vd.T, {Vn.16B}%2, Vm.T"             , "X:0|Q|001110|00|0|Rm|0|10|1|00|Rn|Rd"                 , "ARMv8+ GRP58"],
     ["tbx.8B%"        , "Vd.T, {Vn.16B}%3, Vm.T"             , "X:0|Q|001110|00|0|Rm|0|11|1|00|Rn|Rd"                 , "ARMv8+ GRP58"],
 
-    ["tbz"            , "Rt, #imm6, label14*4"               , "X:b5|011011|0|b40|imm14|Rt"                           , "ARMv8+ GRP13"],
+    ["tbz"            , "Rt, #imm6, offset14*4"              , "X:b5|011011|0|b40|imm14|Rt"                           , "ARMv8+ GRP13"],
 
-    ["tlbi"           , "tlbi_op{, Xt}"                      , "X:1101010100|0|01|op1|CRn=1000|CRm|op2|Rt"            , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:1000==Sys_TLBI"],
+    ["tlbi"           , "tlbi_op{, Xt}"                      , "X:1101010100|0|01|op1|1000|CRm|op2|Rt"                , "ARMv8+ GRP12 ALIAS_OF=sys PREFERRED_IF=SysOp:op1:1000:CRm:op2==Sys_TLBI"],
 
     ["trn1.8B%5|2D"   , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|001110|sz:2|0|Rm|0|010|10|Rn|Rd"                , "ARMv8+ GRP49"],
 
     ["trn2.8B%5|2D"   , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|001110|sz:2|0|Rm|0|110|10|Rn|Rd"                , "ARMv8+ GRP49"],
 
-    ["tst"            , "Wn, #imm12"                         , "X:0|11|100100|0|immr|imms|Rn|Rd=11111"                , "ARMv8+ GRP5 NZCV=WWZZ ALIAS_OF=andS"],
-    ["tst"            , "Xn, #imm13"                         , "X:1|11|100100|N|immr|imms|Rn|Rd=11111"                , "ARMv8+ GRP5 NZCV=WWZZ ALIAS_OF=andS"],
-    ["tst"            , "Wn, Wm{, shift #amount}"            , "X:0|11|01010|shift|0|Rm|imm6|Rn|Rd=11111"             , "ARMv8+ GRP43 NZCV=WWZZ ALIAS_OF=andS"],
-    ["tst"            , "Xn, Xm{, shift #amount}"            , "X:1|11|01010|shift|0|Rm|imm6|Rn|Rd=11111"             , "ARMv8+ GRP43 NZCV=WWZZ ALIAS_OF=andS"],
+    ["tst"            , "Wn, #imm12"                         , "X:0|11|100100|0|immr|imms|Rn|11111"                   , "ARMv8+ GRP5 NZCV=WWZZ ALIAS_OF=andS"],
+    ["tst"            , "Xn, #imm13"                         , "X:1|11|100100|N|immr|imms|Rn|11111"                   , "ARMv8+ GRP5 NZCV=WWZZ ALIAS_OF=andS"],
+    ["tst"            , "Wn, Wm{, shift #amount}"            , "X:0|11|01010|shift|0|Rm|imm6|Rn|11111"                , "ARMv8+ GRP43 NZCV=WWZZ ALIAS_OF=andS"],
+    ["tst"            , "Xn, Xm{, shift #amount}"            , "X:1|11|01010|shift|0|Rm|imm6|Rn|11111"                , "ARMv8+ GRP43 NZCV=WWZZ ALIAS_OF=andS"],
 
     ["uaba.8B%5"      , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|1|01110|sz:2|1|Rm|01111|1|Rn|Rd"                , "ARMv8+ GRP60"],
 
@@ -1710,8 +1714,8 @@
     ["ubfm"           , "Wd, Wn, #immr, #imms"               , "X:0|10|100110|0|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3"],
     ["ubfm"           , "Xd, Xn, #immr, #imms"               , "X:1|10|100110|1|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3"],
 
-    ["ubfx"           , "Wd, Wn, #lsb, #width"               , "X:0|10|100110|0|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=ubfm PREFERRED_IF=BFXPreferred==1"],
-    ["ubfx"           , "Xd, Xn, #lsb, #width"               , "X:1|10|100110|1|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=ubfm PREFERRED_IF=BFXPreferred==1"],
+    ["ubfx"           , "Wd, Wn, #lsb, #width"               , "X:0|10|100110|0|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=ubfm PREFERRED_IF=BFXPreferred:0:1:imms:immr==1"],
+    ["ubfx"           , "Xd, Xn, #lsb, #width"               , "X:1|10|100110|1|immr|imms|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=ubfm PREFERRED_IF=BFXPreferred:1:1:imms:immr==1"],
 
     ["ucvtf"          , "Sd%, Sn%, #fbits"                   , "X:01|1|111110|immh!=0000|immb|11100|1|Rn|Rd"          , "ARMv8+ GRP52"],
     ["ucvtf"          , "Sd%, Sn%"                           , "X:01|1|111100|sz|10000|11101|10|Rn|Rd"                , "ARMv8+ GRP55"],
@@ -1753,7 +1757,7 @@
     ["umlsl'2"        , "Vd.8H|4S|2D, Vn.8B%5, Vm.8B%5"      , "X:0|Q|1|01110|sz:2|1|Rm|1010|00|Rn|Rd"                , "ARMv8+ GRP59"],
     ["umlsl'2"        , "Vd.4S|2D, Vn.4H%3, Vm.H%[idx]"      , "X:0|Q|1|01111|sz!=00|L|M|Rm:4|0110|H|0|Rn|Rd"         , "ARMv8+ GRP62"],
 
-    ["umnegl"         , "Xd, Wn, Wm"                         , "X:1|00|11011|101|Rm|1|Ra=11111|Rn|Rd"                 , "ARMv8+ GRP42 ALIAS_OF=umsubl"],
+    ["umnegl"         , "Xd, Wn, Wm"                         , "X:1|00|11011|101|Rm|1|11111|Rn|Rd"                    , "ARMv8+ GRP42 ALIAS_OF=umsubl"],
 
     ["umov"           , "Wd, Vn.B%2[idx]"                    , "X:0|0|0|01110000|imm5|0|0111|1|Rn|Rd"                 , "ARMv8+ GRP46"],
     ["umov"           , "Xd, Vn.D[idx]"                      , "X:0|1|0|01110000|imm5=x1000|0|0111|1|Rn|Rd"           , "ARMv8+ GRP46"],
@@ -1764,7 +1768,7 @@
 
     ["umull'2"        , "Vd.8H|4S|2D, Vn.8B%5, Vm.8B%5"      , "X:0|Q|1|01110|sz:2|1|Rm|1100|00|Rn|Rd"                , "ARMv8+ GRP59"],
     ["umull'2"        , "Vd.4S|2D, Vn.4H%3, Vm.H%[idx]"      , "X:0|Q|1|01111|sz!=00|L|M|Rm:4|1010|H|0|Rn|Rd"         , "ARMv8+ GRP62"],
-    ["umull"          , "Xd, Wn, Wm"                         , "X:1|00|11011|101|Rm|0|Ra=11111|Rn|Rd"                 , "ARMv8+ GRP42 ALIAS_OF=umaddl"],
+    ["umull"          , "Xd, Wn, Wm"                         , "X:1|00|11011|101|Rm|0|11111|Rn|Rd"                    , "ARMv8+ GRP42 ALIAS_OF=umaddl"],
 
     ["uqadd"          , "Bd%3, Bn%3, Bm%3"                   , "X:01|1|11110|sz:2|1|Rm|00001|1|Rn|Rd"                 , "ARMv8+ GRP54"],
     ["uqadd.8B%5|2D"  , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|1|01110|sz:2|1|Rm|00001|1|Rn|Rd"                , "ARMv8+ GRP60"],
@@ -1822,11 +1826,11 @@
 
     ["usubw'2"        , "Vd.8H|4S|2D, Vn.8H|4S|2D, Vm.8B%5"  , "X:0|Q|1|01110|sz:2|1|Rm|0011|00|Rn|Rd"                , "ARMv8+ GRP59"],
 
-    ["uxtb"           , "Wd, Wn"                             , "X:0|10|100110|0|immr=000000|imms=000111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
+    ["uxtb"           , "Wd, Wn"                             , "X:0|10|100110|0|:6|000111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
 
-    ["uxth"           , "Wd, Wn"                             , "X:0|10|100110|0|immr=000000|imms=001111|Rn|Rd"        , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
+    ["uxth"           , "Wd, Wn"                             , "X:0|10|100110|0|:6|001111|Rn|Rd"                      , "ARMv8+ GRP3 ALIAS_OF=ubfm"],
 
-    ["uxtl'2"         , "Vd.8H|4S|2D, Vn.8B%5"               , "X:0|Q|1|011110|immh!=0000|immb=000|10100|1|Rn|Rd"     , "ARMv8+ GRP57 ALIAS_OF=ushll'2 PREFERRED_IF=BitCount:immh==1"],
+    ["uxtl'2"         , "Vd.8H|4S|2D, Vn.8B%5"               , "X:0|Q|1|011110|immh!=0000|:3|10100|1|Rn|Rd"           , "ARMv8+ GRP57 ALIAS_OF=ushll'2 PREFERRED_IF=BitCount:immh==1"],
 
     ["uzp1.8B%5|2D"   , "Vd.T, Vn.T, Vm.T"                   , "X:0|Q|001110|sz:2|0|Rm|0|001|10|Rn|Rd"                , "ARMv8+ GRP49"],
 
